@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f1a1e" />
+    <title>Kompas Kiblat</title>
+    <link rel="stylesheet" href="./Style%20Kompas%20Kiblat.css" />
+</head>
+<body>
+
+<svg class="svg-sprite" aria-hidden="true">
+    <symbol id="icon-location" viewBox="0 0 24 24">
+        <path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z" />
+        <circle cx="12" cy="10" r="2.5" />
+    </symbol>
+    <symbol id="icon-target" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+    </symbol>
+    <symbol id="icon-compass" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="m15.5 8.5-2.1 4.9-4.9 2.1 2.1-4.9 4.9-2.1Z" />
+    </symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24">
+        <path d="M20 6v5h-5" />
+        <path d="M4 18v-5h5" />
+        <path d="M19 11a7 7 0 0 0-11.9-4.9L4 9" />
+        <path d="M5 13a7 7 0 0 0 11.9 4.9L20 15" />
+    </symbol>
+    <symbol id="icon-share" viewBox="0 0 24 24">
+        <circle cx="18" cy="5" r="3" />
+        <circle cx="6" cy="12" r="3" />
+        <circle cx="18" cy="19" r="3" />
+        <path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4" />
+    </symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="11" height="11" rx="2" />
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </symbol>
+    <symbol id="icon-sliders" viewBox="0 0 24 24">
+        <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3" />
+        <path d="M2 14h4M10 8h4M18 16h4" />
+    </symbol>
+    <symbol id="icon-phone" viewBox="0 0 24 24">
+        <rect x="7" y="2" width="10" height="20" rx="2" />
+        <path d="M11 18h2" />
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="m20 6-11 11-5-5" />
+    </symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24">
+        <path d="m12 3 10 18H2L12 3Z" />
+        <path d="M12 9v5M12 17h.01" />
+    </symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24">
+        <path d="M18 6 6 18M6 6l12 12" />
+    </symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+    </symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+    </symbol>
+    <symbol id="icon-book" viewBox="0 0 24 24">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15Z" />
+    </symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v5M12 8h.01" />
+    </symbol>
+</svg>
+
+<div class="page-shell">
+    <nav class="main-nav" aria-label="Navigasi utama">
+        <button class="nav-brand" type="button" data-page-target="home">
+            <div class="brand-mark" aria-hidden="true">
+                <span class="kaaba-mini"></span>
+            </div>
+            <div>
+                <strong>Kompas Kiblat</strong>
+                <small>Arah Kiblat dan Waktu Salat</small>
+            </div>
+        </button>
+        <div class="nav-links">
+            <button class="nav-link active" type="button" data-page-target="home">Beranda</button>
+            <button class="nav-link" type="button" data-page-target="compass">Kompas</button>
+            <button class="nav-link" type="button" data-page-target="prayer">Waktu Salat</button>
+            <button class="nav-link" type="button" data-page-target="guide">Panduan</button>
+            <button class="nav-link" type="button" data-page-target="about">Tentang</button>
+        </div>
+    </nav>
+
+    <section class="page-section home-page active" data-page="home">
+        <div class="home-hero">
+            <div class="home-copy">
+                <div class="home-logo" aria-hidden="true">
+                    <span class="kaaba-mini logo-Ka'bah"></span>
+                </div>
+                <p class="eyebrow TulisanHomeDigital">Aplikasi Arah Kiblat dan Waktu Salat</p>
+                <h1>Kompas Kiblat Digital</h1>
+                <p class="DeskripsiSingkat">Menentukan arah kiblat dari GPS, pencarian kota global, atau koordinat manual, lengkap dengan jadwal waktu salat harian berdasarkan lokasi aktif.</p>
+                <button class="button primary hero-button" type="button" data-page-target="compass">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
+                    <span>Mulai Kompas</span>
+                </button>
+            </div>
+            <div class="home-visual" aria-hidden="true">
+                <div class="home-ring">
+                    <span class="home-needle"></span>
+                    <span class="home-center"><span class="kaaba-mini"></span></span>
+                </div>
+            </div>
+        </div>
+        <div class="home-feature-grid">
+            <article class="feature-card">
+                <svg class="icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
+                <strong>Arah Kiblat</strong>
+                <span id="homeBearing">Siap menghitung arah dari lokasi aktif.</span>
+            </article>
+            <article class="feature-card">
+                <svg class="icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+                <strong>Waktu Salat</strong>
+                <span id="homeNextPrayer">Jadwal harian akan mengikuti lokasi.</span>
+            </article>
+            <article class="feature-card">
+                <svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+                <strong>Lokasi Global</strong>
+                <span>Cari kota di seluruh dunia memakai OpenStreetMap.</span>
+            </article>
+        </div>
+    </section>
+
+    <section class="page-section compass-page" data-page="compass" hidden>
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <span class="kaaba-mini"></span>
+                </div>
+                <div>
+                    <p class="eyebrow">Arah kiblat presisi</p>
+                    <h1>Kompas Kiblat</h1>
+                </div>
+            </div>
+            <div class="status-pill" id="locationStatusPill">
+                <span class="status-dot"></span>
+                <span id="locationStatus">Contoh lokasi aktif</span>
+            </div>
+        </header>
+
+        <main class="app-grid">
+            <section class="tool-panel compass-panel Box-LokasiKompas" aria-labelledby="compassTitle">
+                <div class="panel-head">
+                    <div>
+                        <p class="eyebrow">Lokasi</p>
+                        <h2 id="compassTitle"><span id="locationName">Makassar</span></h2>
+                    </div>
+                    <button class="button primary" id="locateBtn" type="button">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-target"></use></svg>
+                        <span>Gunakan GPS</span>
+                    </button>
+                </div>
+
+                <div class="compass-stage">
+                    <div class="compass" id="compass" aria-label="Kompas arah kiblat">
+                        <div class="dial" id="dial">
+                            <div class="tick-layer" id="tickLayer"></div>
+                            <span class="cardinal north">U</span>
+                            <span class="cardinal east">T</span>
+                            <span class="cardinal south">S</span>
+                            <span class="cardinal west">B</span>
+                        </div>
+                        <div class="phone-marker" aria-hidden="true">
+                            <svg class="icon"><use href="#icon-phone"></use></svg>
+                        </div>
+                        <div class="qibla-needle" id="qiblaNeedle" aria-hidden="true">
+                            <div class="needle-glow"></div>
+                            <div class="needle-shaft"></div>
+                            <div class="needle-head"></div>
+                        </div>
+                        <div class="center-cap">
+                            <span class="kaaba-core" aria-hidden="true"></span>
+                            <strong>Kiblat</strong>
+                            <small>Ka'bah</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="turn-card">
+                    <p id="turnInstruction">Arah emas menunjukkan kiblat dengan utara di bagian atas.</p>
+                    <span id="headingMode">Mode peta</span>
+                </div>
+
+                <div class="action-row">
+                    <button class="button" id="enableCompassBtn" type="button">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
+                        <span>Aktifkan Kompas</span>
+                    </button>
+                    <button class="button" id="calibrateBtn" type="button">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-refresh"></use></svg>
+                        <span>Kalibrasi</span>
+                    </button>
+                    <button class="icon-button" id="shareBtn" type="button" aria-label="Bagikan arah kiblat">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-share"></use></svg>
+                    </button>
+                </div>
+            </section>
+
+            <aside class="metrics-grid" aria-label="Ringkasan arah kiblat">
+                <article class="metric-card featured">
+                    <span>Arah kiblat</span>
+                    <strong id="bearingValue">292.6&deg;</strong>
+                    <small id="bearingText">Barat laut dari utara sejati</small>
+                </article>
+                <article class="metric-card">
+                    <span>Jarak ke Ka'bah</span>
+                    <strong id="distanceValue">9.148 km</strong>
+                    <small id="distanceText">Perkiraan great-circle</small>
+                </article>
+                <article class="metric-card">
+                    <span>Arah ponsel</span>
+                    <strong id="headingValue">Peta</strong>
+                    <small id="sensorStatus">Sensor belum aktif</small>
+                </article>
+                <article class="metric-card">
+                    <span>Putar</span>
+                    <strong id="turnValue">-</strong>
+                    <small id="turnText">Aktifkan kompas untuk panduan langsung</small>
+                </article>
+                <article class="metric-card wide">
+                    <span>Koordinat aktif</span>
+                    <strong id="coordinateValue">-5.14767, 119.43273</strong>
+                    <small id="accuracyText">Contoh kota: Makassar</small>
+                </article>
+            </aside>
+        </main>
+
+        <section class="control-grid" aria-label="Kontrol lokasi dan simulasi">
+            <div class="tool-panel location-panel">
+                <div class="panel-head compact">
+                    <div>
+                        <p class="eyebrow">Sumber lokasi</p>
+                        <h2>GPS, kota, atau manual</h2>
+                    </div>
+                    <button class="icon-button" id="copyBtn" type="button" aria-label="Salin hasil">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    </button>
+                </div>
+
+                <div class="segmented" role="tablist" aria-label="Pilih metode lokasi">
+                    <button class="segment active" id="gpsTab" type="button" data-mode="gps">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-target"></use></svg>
+                        GPS
+                    </button>
+                    <button class="segment" type="button" data-mode="city">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+                        Kota
+                    </button>
+                    <button class="segment" type="button" data-mode="manual">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-sliders"></use></svg>
+                        Manual
+                    </button>
+                </div>
+
+                <div class="mode-panel active" id="gpsPanel" data-panel="gps">
+                    <p class="panel-copy">Gunakan GPS untuk menghitung kiblat dan waktu salat dari posisi saat ini. Akurasi akan mengikuti izin lokasi dan kualitas sinyal perangkat.</p>
+                    <button class="button primary full" id="gpsPanelBtn" type="button">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-target"></use></svg>
+                        <span>Deteksi lokasi sekarang</span>
+                    </button>
+                </div>
+
+                <div class="mode-panel" data-panel="city">
+                    <form class="city-search-form" id="citySearchForm">
+                        <label class="field-label" for="citySearchInput">Cari kota</label>
+                        <div class="search-row">
+                            <input id="citySearchInput" type="search" placeholder="Contoh: Paris, Tokyo, Makassar..." autocomplete="off" />
+                            <button class="button primary" id="citySearchBtn" type="submit">
+                                <svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+                                <span>Cari</span>
+                            </button>
+                        </div>
+                    </form>
+                    <p class="panel-copy city-status" id="citySearchStatus">Ketik nama kota lalu tekan Cari. Hasil diambil dari Nominatim OpenStreetMap.</p>
+                    <div class="city-results" id="cityResults" aria-live="polite"></div>
+                    <p class="osm-credit">Data lokasi &copy; OpenStreetMap contributors, melalui Nominatim.</p>
+                </div>
+
+                <form class="mode-panel manual-form" id="manualForm" data-panel="manual">
+                    <label>
+                        Nama lokasi
+                        <input id="manualName" type="text" placeholder="Rumah, kantor, masjid..." autocomplete="off" />
+                    </label>
+                    <div class="form-row">
+                        <label>
+                            Latitude
+                            <input id="manualLat" type="number" step="0.000001" min="-90" max="90" placeholder="-6.175400" required />
+                        </label>
+                        <label>
+                            Longitude
+                            <input id="manualLng" type="number" step="0.000001" min="-180" max="180" placeholder="106.827200" required />
+                        </label>
+                    </div>
+                    <button class="button primary full" type="submit">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+                        Terapkan koordinat
+                    </button>
+                </form>
+            </div>
+
+            <div class="tool-panel simulator-panel">
+                <div class="panel-head compact">
+                    <div>
+                        <p class="eyebrow">Kompas</p>
+                        <h2>Sensor dan simulasi</h2>
+                    </div>
+                </div>
+
+                <label class="switch-row">
+                    <input id="simulateToggle" type="checkbox" />
+                    <span>
+                <strong>Simulasikan arah ponsel</strong>
+                <small>Untuk laptop atau browser tanpa sensor kompas.</small>
+              </span>
+                </label>
+
+                <div class="slider-wrap">
+                    <div class="slider-head">
+                        <span>Arah ponsel</span>
+                        <strong id="simHeadingValue">0&deg;</strong>
+                    </div>
+                    <input id="headingSlider" type="range" min="0" max="359" value="0" />
+                </div>
+
+                <div class="notice">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+                    <p>Letakkan perangkat rata, jauhkan dari logam dan magnet, lalu putar membentuk angka delapan jika arah terasa meleset.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="insight-band" aria-label="Detail perhitungan">
+            <div>
+                <p class="eyebrow">Perhitungan</p>
+                <h2>Rumus great-circle ke koordinat Ka'bah</h2>
+            </div>
+            <p id="formulaText">Bearing dihitung dari lokasi aktif menuju 21.422487&deg; LU, 39.826206&deg; BT. Nilai kompas memakai utara sejati sebagai acuan.</p>
+        </section>
+    </section>
+
+    <section class="page-section prayer-page" data-page="prayer" hidden>
+        <header class="page-head WaktuSalat-head">
+            <p class="eyebrow">Jadwal harian</p>
+            <h1>Waktu Salat</h1>
+            <p>Jadwal Subuh, Terbit, Zuhur, Asar, Magrib, dan Isya dihitung dari lokasi aktif yang sama dengan kompas kiblat.</p>
+        </header>
+
+        <div class="prayer-layout">
+            <section class="tool-panel prayer-panel Box-LokasiAktif" aria-labelledby="prayerTitle">
+                <div class="panel-head ">
+                    <div>
+                        <p class="eyebrow">Lokasi aktif</p>
+                        <h2 id="prayerTitle"><span id="prayerLocationName">Makassar</span></h2>
+                    </div>
+                    <button class="button primary" type="button" data-page-target="compass">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-location"></use></svg>
+                        <span>Ubah Lokasi</span>
+                    </button>
+                </div>
+
+                <div class="prayer-summary">
+                    <article class="date-card">
+                        <span>Tanggal Masehi</span>
+                        <strong id="gregorianDate">-</strong>
+                        <small id="hijriDate">-</small>
+                    </article>
+                    <article class="date-card next">
+                        <span>Waktu berikutnya</span>
+                        <strong id="nextPrayerName">-</strong>
+                        <small id="countdownText">-</small>
+                    </article>
+                </div>
+                </section>
+                <div class="prayer-times-grid">
+                    <article class="prayer-time-card" data-prayer-key="fajr">
+                        <span>Subuh</span>
+                        <strong id="prayerFajr">-</strong>
+                    </article>
+                    <article class="prayer-time-card" data-prayer-key="sunrise">
+                        <span>Terbit</span>
+                        <strong id="prayerSunrise">-</strong>
+                    </article>
+                    <article class="prayer-time-card" data-prayer-key="dhuhr">
+                        <span>Zuhur</span>
+                        <strong id="prayerDhuhr">-</strong>
+                    </article>
+                    <article class="prayer-time-card" data-prayer-key="asr">
+                        <span>Asar</span>
+                        <strong id="prayerAsr">-</strong>
+                    </article>
+                    <article class="prayer-time-card" data-prayer-key="maghrib">
+                        <span>Magrib</span>
+                        <strong id="prayerMaghrib">-</strong>
+                    </article>
+                    <article class="prayer-time-card" data-prayer-key="isha">
+                        <span>Isya</span>
+                        <strong id="prayerIsha">-</strong>
+                    </article>
+                </div>
+        </div>
+        </section>
+        <aside class="tool-panel prayer-info">
+            <p class="eyebrow">Detail jadwal</p>
+            <h2>Metode dan zona waktu</h2>
+            <dl class="info-list">
+                <div>
+                    <dt>Metode</dt>
+                    <dd>Muslim World League, Subuh 18&deg;, Isya 17&deg;, Asar standar.</dd>
+                </div>
+                <div>
+                    <dt>Zona waktu</dt>
+                    <dd id="prayerTimezone">-</dd>
+                </div>
+                <div>
+                    <dt>Catatan</dt>
+                    <dd id="scheduleStatus">Jadwal akan berubah setiap lokasi diperbarui.</dd>
+                </div>
+            </dl>
+        </aside>
+</div>
+</section>
+
+<section class="page-section guide-page" data-page="guide" hidden>
+    <header class="page-head Panduan-head">
+        <p class="eyebrow">Panduan pengguna</p>
+        <h1>Cara Menggunakan Aplikasi</h1>
+        <p>Ikuti langkah sesuai sumber lokasi dan perangkat yang digunakan.</p>
+    </header>
+
+    <div class="guide-grid Box-MenggunakanGps">
+        <article class="guide-card">
+            <svg class="icon" aria-hidden="true"><use href="#icon-target"></use></svg>
+            <h2>Menggunakan GPS</h2>
+            <p>Buka halaman Kompas, pilih tab GPS, lalu tekan Deteksi lokasi sekarang. Izinkan akses lokasi saat browser meminta izin.</p>
+        </article>
+        <article class="guide-card">
+            <svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+            <h2>Memilih kota</h2>
+            <p>Pilih tab Kota, ketik nama kota di kolom pencarian, tekan Cari, lalu pilih hasil yang paling sesuai.</p>
+        </article>
+        <article class="guide-card">
+            <svg class="icon" aria-hidden="true"><use href="#icon-sliders"></use></svg>
+            <h2>Koordinat manual</h2>
+            <p>Pilih tab Manual, isi latitude dan longitude, lalu tekan Terapkan koordinat untuk menghitung kiblat dan waktu salat.</p>
+        </article>
+        <article class="guide-card">
+            <svg class="icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
+            <h2>Mengaktifkan kompas</h2>
+            <p>Tekan Aktifkan Kompas pada perangkat yang memiliki sensor orientasi. Arahkan bagian atas perangkat mengikuti panah emas.</p>
+        </article>
+        <article class="guide-card">
+            <svg class="icon" aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <h2>Kalibrasi kompas</h2>
+            <p>Tekan Kalibrasi, jauhkan perangkat dari benda magnetik, lalu putar perlahan membentuk angka delapan agar sensor lebih stabil.</p>
+        </article>
+        <article class="guide-card">
+            <svg class="icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+            <h2>Melihat waktu salat</h2>
+            <p>Buka halaman Waktu Salat untuk melihat jadwal harian, tanggal Masehi/Hijriah, dan hitung mundur waktu berikutnya.</p>
+        </article>
+    </div>
+</section>
+
+<section class="page-section about-page" data-page="about" hidden>
+    <header class="page-head Tentang-head">
+        <p class="eyebrow">Informasi aplikasi</p>
+        <h1>Tentang</h1>
+        <p>Ringkasan aplikasi.</p>
+    </header>
+
+    <div class="about-grid">
+        <section class="tool-panel about-card">
+            <div class="brand about-brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <span class="kaaba-mini"></span>
+                </div>
+                <div>
+                    <p class="eyebrow">Nama aplikasi</p>
+                    <h2>Kompas Kiblat</h2>
+                </div>
+            </div>
+            <dl class="info-list">
+                <div>
+                    <dt>Tujuan</dt>
+                    <dd>Membantu pengguna menentukan arah kiblat dan melihat jadwal waktu salat berdasarkan lokasi aktif.</dd>
+                </div>
+                <div>
+                    <dt>Metode perhitungan kiblat</dt>
+                    <dd>Great Circle Bearing dari koordinat pengguna menuju koordinat Ka'bah di Makkah.</dd>
+                </div>
+                <div>
+                    <dt>Versi aplikasi</dt>
+                    <dd>1.1.0</dd>
+                </div>
+                <div>
+                    <dt>Nama pembuat</dt>
+                    <dd>Kelompok</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="tool-panel Box-SumberData">
+            <p class="eyebrow">Sumber data</p>
+            <h2>Lokasi dan jadwal</h2>
+            <p class="about-copy">Pencarian kota menggunakan Nominatim OpenStreetMap. Jadwal salat dihitung di browser memakai rumus posisi matahari, sehingga lokasi GPS, kota hasil pencarian, dan koordinat manual memakai alur yang sama.</p>
+            <p class="about-copy">Jika zona waktu online tidak tersedia, aplikasi memakai estimasi berdasarkan longitude dan menampilkan catatan pada halaman Waktu Salat.</p>
+        </section>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <span>Kompas Kiblat &copy; 2026</span>
+    <span>Arah kiblat, lokasi global, dan waktu salat dalam satu aplikasi.</span>
+</footer>
+</div>
+
+<dialog class="calibration-dialog" id="calibrationDialog">
+    <div class="dialog-head">
+        <div>
+            <p class="eyebrow">Kalibrasi</p>
+            <h2>Perbaiki arah kompas</h2>
+        </div>
+        <button class="icon-button" id="closeDialogBtn" type="button" aria-label="Tutup">
+            <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+    </div>
+    <ol class="calibration-list">
+        <li>Angkat perangkat setinggi dada dan jauhkan dari benda logam, casing magnet, atau speaker.</li>
+        <li>Putar perangkat perlahan membentuk angka delapan selama beberapa detik.</li>
+        <li>Letakkan rata, aktifkan kompas, lalu sejajarkan panah emas ke depan perangkat.</li>
+    </ol>
+    <button class="button primary full" id="doneCalibrationBtn" type="button">
+        <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+        Selesai
+    </button>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="./Kompas%20Kiblat.js" defer></script>
+</body>
+</html>
