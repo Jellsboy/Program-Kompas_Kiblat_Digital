@@ -285,7 +285,7 @@ function updateLocationStatus() {
     }
 
     if (loc.source === "sample") {
-        setText(els.locationStatus, "Contoh lokasi aktif");
+        setText(els.locationStatus, " Lokasi belum aktif");
         els.locationStatusPill?.classList.add("warn");
         setText(els.accuracyText, `Contoh kota: ${loc.name}`);
         return;

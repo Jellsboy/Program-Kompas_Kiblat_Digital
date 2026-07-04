@@ -1517,6 +1517,7 @@ input[type="range"] {
 
     .Panduan-head,
     .about-head{
+        padding-bottom: 70px ;
         padding-left: 30px;
         padding-right: 100px;
     }
@@ -1583,7 +1584,10 @@ input[type="range"] {
     .status-pill.good #locationStatus{
         color: #000000;
     }
-
+    .status-pill.warn #locationStatus{
+        color: red !important;
+    }
+    
 }
 
 
