@@ -7,7 +7,26 @@
     <title>Kompas Kiblat</title>
     <link rel="stylesheet" href="./Style%20Kompas%20Kiblat.css" />
 </head>
+<script>
+    window.addEventListener("load", () => {
+        const splash = document.getElementById("splashScreen");
+        if (!splash) return;
+        setTimeout(() => {
+            splash.classList.add("hide");
+            setTimeout(() => splash.remove(), 450);
+        }, 1000); // <- ganti angka ini (ms) untuk atur lama splash tampil
+    });
+</script>
 <body>
+
+<div class="splash-screen" id="splashScreen" aria-hidden="true">
+    <div class="splash-mark">
+        <span class="kaaba-mini"></span>
+    </div>
+    <p class="splash-title">Kompas Kiblat</p>
+    <p class="splash-subtitle">Arah Kiblat dan Waktu Salat</p>
+    <div class="splash-spinner"></div>
+</div>
 
 <svg class="svg-sprite" aria-hidden="true">
     <symbol id="icon-location" viewBox="0 0 24 24">

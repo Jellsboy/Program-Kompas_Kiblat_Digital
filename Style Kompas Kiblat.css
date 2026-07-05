@@ -1565,7 +1565,6 @@ input[type="range"] {
         margin-bottom: -20px;
     }
 
-
     .guide-page .page-head h1,
     .about-page .page-head h1,
     .prayer-page .page-head h1{
@@ -1641,4 +1640,81 @@ input[type="range"] {
 #turnValue.qibla-aligned {
     color: #16a34a;
     background: #dcfce7;
+}
+
+/* ===== Splash Screen ===== */
+
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: linear-gradient(180deg, #0f1a1e, #142228);
+    color: #fffdf8;
+    transition: opacity 420ms ease, visibility 420ms ease;
+}
+
+.splash-screen.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.splash-mark {
+    display: grid;
+    place-items: center;
+    width: 84px;
+    height: 84px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    animation: splash-pulse 1.6s ease-in-out infinite;
+}
+
+.splash-mark .kaaba-mini {
+    width: 34px;
+    height: 38px;
+}
+
+.splash-title {
+    margin: 4px 0 0;
+    font-size: 1.3rem;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+}
+
+.splash-subtitle {
+    margin: 0;
+    color: rgba(255, 253, 248, 0.7);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.splash-spinner {
+    width: 28px;
+    height: 28px;
+    margin-top: 6px;
+    border: 3px solid rgba(255, 255, 255, 0.18);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: splash-spin 0.85s linear infinite;
+}
+
+@keyframes splash-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+}
+
+@keyframes splash-spin {
+    to { transform: rotate(360deg); }
+}
+
+.splash-mark img.FotoBangWawan {
+    width: 560px;
+    height: 560px;
+    object-fit: contain;
 }
