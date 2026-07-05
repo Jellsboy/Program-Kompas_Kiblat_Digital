@@ -1314,6 +1314,11 @@ input[type="range"] {
     transform: translate(-50%, 0);
 }
 
+.home-copy p.DeskripsiSingkat {
+    font-size: 0.95rem;
+    margin-top: 10px; /* contoh, sesuaikan sendiri */
+}
+
 @media (max-width: 980px) {
     .app-grid,
     .control-grid,
@@ -1556,9 +1561,10 @@ input[type="range"] {
 
     .home-copy .TulisanHomeDigital{
         position: relative;
-        top: -55px;
+        top: -45px;
         margin-bottom: -20px;
     }
+
 
     .guide-page .page-head h1,
     .about-page .page-head h1,
