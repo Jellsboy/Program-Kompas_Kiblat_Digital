@@ -1602,3 +1602,41 @@ input[type="range"] {
     padding-left: 30px;
     padding-right: 100px;
 }
+
+/* ===== Indikator hijau saat kompas tepat mengarah ke kiblat ===== */
+/* Tambahkan blok ini ke akhir file "Style Kompas Kiblat.css" */
+
+.qibla-needle.qibla-aligned .needle-shaft {
+    background: linear-gradient(180deg, #86efac, #16a34a);
+    box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
+}
+
+.qibla-needle.qibla-aligned .needle-head {
+    border-bottom-color: #16a34a;
+    filter: drop-shadow(0 9px 12px rgba(22, 163, 74, 0.3));
+}
+
+.qibla-needle.qibla-aligned .needle-glow {
+    background: linear-gradient(180deg, rgba(134, 239, 172, 0.65), rgba(22, 163, 74, 0));
+}
+
+.compass.qibla-aligned {
+    box-shadow:
+            inset 0 0 0 1px rgba(22, 163, 74, 0.35),
+            inset 0 0 0 18px rgba(134, 239, 172, 0.28),
+            0 20px 50px rgba(17, 25, 29, 0.16);
+}
+
+.turn-card.qibla-aligned {
+    border-color: #86efac;
+    background: #eafff1;
+}
+
+.turn-card.qibla-aligned p {
+    color: #15803d;
+}
+
+#turnValue.qibla-aligned {
+    color: #16a34a;
+    background: #dcfce7;
+}

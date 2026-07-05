@@ -24,6 +24,7 @@ const $$ = (selector) => [...document.querySelectorAll(selector)];
 
 const els = {
     compass: $("#compass"),
+    qiblaNeedle: $("#qiblaNeedle"),
     tickLayer: $("#tickLayer"),
     locationStatusPill: $("#locationStatusPill"),
     locationStatus: $("#locationStatus"),
@@ -324,6 +325,8 @@ function updateLocationStatus() {
     setText(els.accuracyText, "Koordinat dari input manual");
 }
 
+const QIBLA_ALIGN_THRESHOLD = 2; // derajat toleransi dianggap "tepat"
+
 function updateHeadingStatus(relative) {
     if (!Number.isFinite(state.heading)) {
         setText(els.headingValue, "Peta");
@@ -332,23 +335,34 @@ function updateHeadingStatus(relative) {
         setText(els.turnText, "Aktifkan kompas untuk panduan langsung");
         setText(els.turnInstruction, "Arah emas menunjukkan kiblat dengan utara di bagian atas.");
         setText(els.headingMode, "Mode peta");
+        setQiblaAligned(false);
         return;
     }
 
     const turn = turnPhrase(relative);
+    const aligned = Math.abs(relative) <= QIBLA_ALIGN_THRESHOLD;
+
     setText(els.headingValue, formatDeg(state.heading, 0));
     setText(els.sensorStatus, state.simulation ? "Simulasi arah aktif" : `Sensor ${state.sensorSource}`);
     setText(els.turnValue, turn.value);
     setText(els.turnText, turn.detail);
     setText(els.headingMode, state.simulation ? "Simulasi" : "Kompas aktif");
+    setQiblaAligned(aligned);
 
-    if (Math.abs(relative) <= 2) {
+    if (aligned) {
         setText(els.turnInstruction, "Tepat. Bagian atas perangkat sudah mengarah ke kiblat.");
     } else {
         const side = relative > 0 ? "kanan" : "kiri";
         const tone = Math.abs(relative) <= 15 ? "Sedikit" : "Putar";
         setText(els.turnInstruction, `${tone} ke ${side} ${Math.round(Math.abs(relative))} derajat sampai panah emas lurus ke atas.`);
     }
+}
+
+function setQiblaAligned(aligned) {
+    els.compass?.classList.toggle("qibla-aligned", aligned);
+    els.qiblaNeedle?.classList.toggle("qibla-aligned", aligned);
+    els.turnInstruction?.closest(".turn-card")?.classList.toggle("qibla-aligned", aligned);
+    els.turnValue?.classList.toggle("qibla-aligned", aligned);
 }
 
 function showToast(message) {
@@ -553,32 +567,80 @@ async function enableCompass() {
     state.simulation = false;
     resetHeadingSmoothing();
     els.simulateToggle.checked = false;
-    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
-    window.addEventListener("deviceorientation", handleOrientation, true);
+
+    // Hanya pakai SATU sumber data sensor supaya tidak "tarik-menarik" antar referensi berbeda.
+    // deviceorientationabsolute (atau webkitCompassHeading di iOS) = akurat, mengacu ke utara asli.
+    // deviceorientation biasa dipakai HANYA sebagai cadangan jika absolute tidak pernah muncul.
+    let absoluteDetected = false;
+    let fallbackTimeoutId = null;
+
+    const absoluteHandler = (event) => {
+        absoluteDetected = true;
+        if (fallbackTimeoutId) {
+            clearTimeout(fallbackTimeoutId);
+            fallbackTimeoutId = null;
+        }
+        window.removeEventListener("deviceorientation", fallbackHandler, true);
+        handleOrientation(event);
+    };
+
+    const fallbackHandler = (event) => {
+        if (absoluteDetected) return;
+        if (event.absolute === true || typeof event.webkitCompassHeading === "number") {
+            absoluteDetected = true;
+        }
+        handleOrientation(event);
+    };
+
+    window.addEventListener("deviceorientationabsolute", absoluteHandler, true);
+    window.addEventListener("deviceorientation", fallbackHandler, true);
+
+    // Kalau setelah 1.5 detik tidak ada sinyal absolute sama sekali, tetap pakai fallback relatif
+    // (lebih baik ada arah kasar daripada tidak ada sama sekali), tapi beri tahu pengguna.
+    fallbackTimeoutId = setTimeout(() => {
+        if (!absoluteDetected) {
+            showToast("Sensor arah HP ini kurang presisi (tidak absolut). Kalibrasi manual mungkin diperlukan.");
+        }
+    }, 1500);
+
     state.compassActive = true;
     els.enableCompassBtn.querySelector("span").textContent = "Kompas Aktif";
     showToast("Kompas aktif. Kalibrasi jika arah terasa tidak stabil.");
 }
 
-const HEADING_BUFFER_SIZE = 20;     // jumlah sample terakhir yang dirata-rata; makin besar makin stabil, makin lambat respon
-const HEADING_DEADBAND = 3;       // derajat; perubahan di bawah ini diabaikan supaya tidak "gemetar"
+const HEADING_BUFFER_SIZE = 12;     // jumlah sample terakhir yang dirata-rata; makin besar makin stabil, makin lambat respon
+const HEADING_DEADBAND = 1.2;       // derajat; perubahan di bawah ini diabaikan supaya tidak "gemetar"
 const HEADING_MIN_INTERVAL_MS = 80; // jarak minimum antar update tampilan (ms)
 
 let headingBuffer = [];
 let headingRenderQueued = false;
 let lastHeadingUpdateAt = 0;
 
-function pushHeadingSample(rawHeading) {
-    headingBuffer.push(rawHeading);
-    if (headingBuffer.length > HEADING_BUFFER_SIZE) headingBuffer.shift();
+const HEADING_OUTLIER_THRESHOLD = 45; // derajat; sample yang melompat jauh dari rata-rata dianggap glitch dan dibuang
 
+function circularMean(samples) {
     let sumSin = 0;
     let sumCos = 0;
-    headingBuffer.forEach((h) => {
+    samples.forEach((h) => {
         sumSin += Math.sin(toRad(h));
         sumCos += Math.cos(toRad(h));
     });
-    return normalizeAngle(toDeg(Math.atan2(sumSin / headingBuffer.length, sumCos / headingBuffer.length)));
+    return normalizeAngle(toDeg(Math.atan2(sumSin / samples.length, sumCos / samples.length)));
+}
+
+function pushHeadingSample(rawHeading) {
+    if (headingBuffer.length >= 3) {
+        const currentMean = circularMean(headingBuffer);
+        const jump = Math.abs(signedAngle(rawHeading - currentMean));
+        if (jump > HEADING_OUTLIER_THRESHOLD) {
+            // Kemungkinan glitch sensor sesaat (mis. gangguan magnetik) - buang, jangan rusak rata-rata.
+            return currentMean;
+        }
+    }
+
+    headingBuffer.push(rawHeading);
+    if (headingBuffer.length > HEADING_BUFFER_SIZE) headingBuffer.shift();
+    return circularMean(headingBuffer);
 }
 
 function resetHeadingSmoothing() {
