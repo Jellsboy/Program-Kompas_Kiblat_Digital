@@ -1,5 +1,4 @@
 const KAABA = Object.freeze({ lat: 21.422487, lng: 39.826206 });
-const SAMPLE_LOCATION = Object.freeze({ name: "Makassar", lat: -5.147665, lng: 119.432732, source: "sample" });
 const DEG = "\u00b0";
 const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
 const PRAYER_METHOD = Object.freeze({ fajrAngle: 18, ishaAngle: 17, asrFactor: 1 });
@@ -185,7 +184,6 @@ function navigateTo(page, push = true) {
     });
     $$(".nav-link").forEach((button) => button.classList.toggle("active", button.dataset.pageTarget === target));
 
-    // Kontrol visibilitas panel Detail Jadwal - hanya tampil di Beranda dan Waktu Salat
     if (els.prayerInfo) {
         const showPrayerInfo = target === "home" || target === "prayer";
         els.prayerInfo.hidden = !showPrayerInfo;
@@ -266,6 +264,36 @@ function render() {
     renderPrayerSchedule();
 }
 
+function renderEmptyState() {
+    els.compass?.style.removeProperty("--heading-angle");
+    els.compass?.style.removeProperty("--qibla-angle");
+    els.compass?.style.removeProperty("--needle-angle");
+
+    setText(els.locationName, "Lokasi belum diatur");
+    setText(els.bearingValue, "-");
+    setText(els.bearingText, "Aktifkan lokasi untuk melihat arah kiblat");
+    setText(els.distanceValue, "-");
+    setText(els.distanceText, "Menuju Ka'bah di Makkah");
+    setText(els.coordinateValue, "-");
+    setText(els.formulaText, "Arah kiblat akan dihitung setelah lokasi diaktifkan.");
+    setText(els.homeBearing, "Lokasi belum diatur.");
+    setText(els.prayerLocationName, "-");
+
+    setText(els.gregorianDate, "-");
+    setText(els.hijriDate, "-");
+    setText(els.nextPrayerName, "-");
+    setText(els.countdownText, "Aktifkan lokasi untuk melihat jadwal salat.");
+    setText(els.prayerTimezone, "-");
+    setText(els.scheduleStatus, "Belum ada lokasi. Gunakan GPS, cari kota, atau masukkan koordinat manual.");
+    setText(els.homeNextPrayer, "Jadwal belum tersedia.");
+
+    ["prayerFajr", "prayerSunrise", "prayerDhuhr", "prayerAsr", "prayerMaghrib", "prayerIsha"].forEach((key) => {
+        setText(els[key], "-");
+    });
+
+    updateHeadingStatus(0);
+}
+
 function setText(element, text) {
     if (element) element.textContent = text;
 }
@@ -281,13 +309,6 @@ function updateLocationStatus() {
             els.accuracyText,
             Number.isFinite(loc.accuracy) ? `Akurasi GPS sekitar ${Math.round(loc.accuracy)} m` : "GPS aktif, akurasi tidak tersedia"
         );
-        return;
-    }
-
-    if (loc.source === "sample") {
-        setText(els.locationStatus, " Lokasi belum aktif");
-        els.locationStatusPill?.classList.add("warn");
-        setText(els.accuracyText, `Contoh kota: ${loc.name}`);
         return;
     }
 
@@ -538,6 +559,15 @@ async function enableCompass() {
     showToast("Kompas aktif. Kalibrasi jika arah terasa tidak stabil.");
 }
 
+const HEADING_SMOOTHING = 0.15; // 0-1, makin kecil makin halus tapi makin lambat responnya
+let headingRenderQueued = false;
+
+function smoothHeading(previous, next, factor) {
+    if (!Number.isFinite(previous)) return next;
+    const delta = signedAngle(next - previous);
+    return normalizeAngle(previous + delta * factor);
+}
+
 function handleOrientation(event) {
     if (state.simulation) return;
     let heading = null;
@@ -552,9 +582,16 @@ function handleOrientation(event) {
     }
 
     if (!Number.isFinite(heading)) return;
-    state.heading = normalizeAngle(heading);
+    state.heading = smoothHeading(state.heading, normalizeAngle(heading), HEADING_SMOOTHING);
     state.sensorSource = source;
-    render();
+
+    if (!headingRenderQueued) {
+        headingRenderQueued = true;
+        requestAnimationFrame(() => {
+            headingRenderQueued = false;
+            render();
+        });
+    }
 }
 
 function toggleSimulation(enabled) {
@@ -755,10 +792,6 @@ function getLocationDateParts(date = new Date()) {
 
 function renderPrayerSchedule() {
     if (!state.location || !state.timeZone) return;
-
-    console.log("LAT :", state.location.lat);
-    console.log("LNG :", state.location.lng);
-    console.log("TIMEZONE :", state.timeZone);
 
     const dateParts = getLocationDateParts();
     const key = `${dateParts.year}-${dateParts.month}-${dateParts.day}-${state.timeZone.label}`;
@@ -1034,7 +1067,12 @@ function wireEvents() {
 function loadInitialLocation() {
     try {
         const saved = JSON.parse(localStorage.getItem("qibla-location"));
-        if (saved && Number.isFinite(saved.lat) && Number.isFinite(saved.lng)) {
+
+        if (
+            saved &&
+            Number.isFinite(saved.lat) &&
+            Number.isFinite(saved.lng)
+        ) {
             setLocation(saved, false);
             return;
         }
@@ -1042,7 +1080,14 @@ function loadInitialLocation() {
         localStorage.removeItem("qibla-location");
     }
 
-    setLocation(SAMPLE_LOCATION, false);
+    state.location = null;
+    state.timeZone = null;
+    state.qiblaBearing = 0;
+    state.distanceKm = 0;
+    state.prayerTimes = [];
+    state.prayerDateKey = "";
+
+    renderEmptyState();
 }
 
 function init() {
