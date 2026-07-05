@@ -1337,10 +1337,6 @@ input[type="range"] {
         min-height: auto;
     }
 
-    .logo-Ka\'bah{
-        position: relative;
-        top: -55px;
-    }
 
     .home-visual {
         min-height: auto;
@@ -1559,9 +1555,9 @@ input[type="range"] {
     }
 
     .home-copy .TulisanHomeDigital{
-        font-size: 13px;
-        color: #6d8b96;
-        margin-top: -50px;
+        position: relative;
+        top: -60px;
+        margin-bottom: -30px;
     }
 
     .guide-page .page-head h1,
