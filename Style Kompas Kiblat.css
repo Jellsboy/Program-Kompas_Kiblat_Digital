@@ -1588,7 +1588,6 @@ input[type="range"] {
     .status-pill.warn #locationStatus{
         color: red !important;
     }
-
 }
 
 
@@ -1713,7 +1712,7 @@ input[type="range"] {
     to { transform: rotate(360deg); }
 }
 
-.splash-mark img.FotoBangWawan {
+img.FotoBangWawan {
     width: 560px;
     height: 560px;
     object-fit: contain;
