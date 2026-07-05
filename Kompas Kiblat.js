@@ -560,8 +560,8 @@ async function enableCompass() {
     showToast("Kompas aktif. Kalibrasi jika arah terasa tidak stabil.");
 }
 
-const HEADING_BUFFER_SIZE = 12;     // jumlah sample terakhir yang dirata-rata; makin besar makin stabil, makin lambat respon
-const HEADING_DEADBAND = 1.2;       // derajat; perubahan di bawah ini diabaikan supaya tidak "gemetar"
+const HEADING_BUFFER_SIZE = 20;     // jumlah sample terakhir yang dirata-rata; makin besar makin stabil, makin lambat respon
+const HEADING_DEADBAND = 3;       // derajat; perubahan di bawah ini diabaikan supaya tidak "gemetar"
 const HEADING_MIN_INTERVAL_MS = 80; // jarak minimum antar update tampilan (ms)
 
 let headingBuffer = [];
