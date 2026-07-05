@@ -551,6 +551,7 @@ async function enableCompass() {
     }
 
     state.simulation = false;
+    resetHeadingSmoothing();
     els.simulateToggle.checked = false;
     window.addEventListener("deviceorientationabsolute", handleOrientation, true);
     window.addEventListener("deviceorientation", handleOrientation, true);
@@ -559,13 +560,30 @@ async function enableCompass() {
     showToast("Kompas aktif. Kalibrasi jika arah terasa tidak stabil.");
 }
 
-const HEADING_SMOOTHING = 0.15; // 0-1, makin kecil makin halus tapi makin lambat responnya
-let headingRenderQueued = false;
+const HEADING_BUFFER_SIZE = 12;     // jumlah sample terakhir yang dirata-rata; makin besar makin stabil, makin lambat respon
+const HEADING_DEADBAND = 1.2;       // derajat; perubahan di bawah ini diabaikan supaya tidak "gemetar"
+const HEADING_MIN_INTERVAL_MS = 80; // jarak minimum antar update tampilan (ms)
 
-function smoothHeading(previous, next, factor) {
-    if (!Number.isFinite(previous)) return next;
-    const delta = signedAngle(next - previous);
-    return normalizeAngle(previous + delta * factor);
+let headingBuffer = [];
+let headingRenderQueued = false;
+let lastHeadingUpdateAt = 0;
+
+function pushHeadingSample(rawHeading) {
+    headingBuffer.push(rawHeading);
+    if (headingBuffer.length > HEADING_BUFFER_SIZE) headingBuffer.shift();
+
+    let sumSin = 0;
+    let sumCos = 0;
+    headingBuffer.forEach((h) => {
+        sumSin += Math.sin(toRad(h));
+        sumCos += Math.cos(toRad(h));
+    });
+    return normalizeAngle(toDeg(Math.atan2(sumSin / headingBuffer.length, sumCos / headingBuffer.length)));
+}
+
+function resetHeadingSmoothing() {
+    headingBuffer = [];
+    lastHeadingUpdateAt = 0;
 }
 
 function handleOrientation(event) {
@@ -582,8 +600,19 @@ function handleOrientation(event) {
     }
 
     if (!Number.isFinite(heading)) return;
-    state.heading = smoothHeading(state.heading, normalizeAngle(heading), HEADING_SMOOTHING);
+
+    const averaged = pushHeadingSample(normalizeAngle(heading));
     state.sensorSource = source;
+
+    const now = performance.now();
+    const previous = state.heading;
+    const changed = !Number.isFinite(previous) || Math.abs(signedAngle(averaged - previous)) >= HEADING_DEADBAND;
+    const timeElapsed = now - lastHeadingUpdateAt >= HEADING_MIN_INTERVAL_MS;
+
+    if (!changed || !timeElapsed) return;
+
+    lastHeadingUpdateAt = now;
+    state.heading = averaged;
 
     if (!headingRenderQueued) {
         headingRenderQueued = true;
@@ -596,6 +625,7 @@ function handleOrientation(event) {
 
 function toggleSimulation(enabled) {
     state.simulation = enabled;
+    resetHeadingSmoothing();
     if (enabled) {
         state.heading = Number(els.headingSlider.value);
         state.sensorSource = "simulasi";
